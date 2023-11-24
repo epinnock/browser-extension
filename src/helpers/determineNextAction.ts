@@ -47,15 +47,23 @@ export async function determineNextAction(
     return null;
   }
 
+
+  //@Todo we export to a new function than can change this to point to the vllm local llm server based on the model
   const openai = new OpenAIApi(
     new Configuration({
       apiKey: key,
     })
   );
+  const vllm = new OpenAIApi(
+    new Configuration({
+      apiKey: key,
+      basePath: 'http://192.168.0.152:8000/v1',
+    }));
 
+  const api = model.includes('gpt') ? openai:vllm;
   for (let i = 0; i < maxAttempts; i++) {
     try {
-      const completion = await openai.createChatCompletion({
+      const completion = await api.createChatCompletion({
         model: model,
         messages: [
           {
