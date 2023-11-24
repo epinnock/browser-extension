@@ -37,7 +37,8 @@ export async function determineNextAction(
   previousActions: ParsedResponseSuccess[],
   simplifiedDOM: string,
   maxAttempts = 3,
-  notifyError?: (error: string) => void
+  
+  notifyError?: (error: string) => void,
 ) {
   const model = useAppState.getState().settings.selectedModel;
   const prompt = formatPrompt(taskInstructions, previousActions, simplifiedDOM);

@@ -1,7 +1,9 @@
 import getAnnotatedDOM, {
   getUniqueElementSelectorId,
+  captureTab
 } from '../pages/Content/getAnnotatedDOM';
 import { copyToClipboard } from '../pages/Content/copyToClipboard';
+
 
 import ripple from '../pages/Content/ripple';
 import { sleep } from './utils';
@@ -11,6 +13,7 @@ export const rpcMethods = {
   getUniqueElementSelectorId,
   ripple,
   copyToClipboard,
+  captureTab
 } as const;
 
 export type RPCMethods = typeof rpcMethods;

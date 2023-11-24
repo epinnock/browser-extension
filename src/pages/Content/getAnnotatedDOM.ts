@@ -73,6 +73,14 @@ export default function getAnnotatedDOM() {
   return (result.clonedDOM as HTMLElement).outerHTML;
 }
 
+
+export async function captureTab(): Promise<string> {
+  const canvas: HTMLCanvasElement = await html2canvas(document.body);
+  const imageData: string = canvas.toDataURL('image/png');
+  console.log("rendered image data: \n", imageData);
+  return imageData;
+}
+
 // idempotent function to get a unique id for an element
 export function getUniqueElementSelectorId(id: number): string {
   const element = currentElements[id];
@@ -83,3 +91,5 @@ export function getUniqueElementSelectorId(id: number): string {
   element.setAttribute(TAXY_ELEMENT_SELECTOR, uniqueId);
   return uniqueId;
 }
+
+
