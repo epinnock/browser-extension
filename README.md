@@ -16,7 +16,7 @@ Here's Taxy using Google Calendar with the prompt "Schedule standup tomorrow at 
 
 ## Table of Contents
 
-- [Taxy AI: Full Browser Automation](#taxy-ai-full-browser-automation)
+- [Fulcrum: Full Browser Automation](#taxy-ai-full-browser-automation)
   - [Table of Contents](#table-of-contents)
   - [Installing and Running](#installing-and-running)
     - [Installing the extension](#installing-the-extension)

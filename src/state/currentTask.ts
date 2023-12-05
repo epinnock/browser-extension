@@ -90,6 +90,7 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
 
           setActionStatus('pulling-dom');
           const pageDOM = await getSimplifiedDom();
+          const pageScreenshot = await callDOMAction('captureTab');
           if (!pageDOM) {
             set((state) => {
               state.currentTask.status = 'error';

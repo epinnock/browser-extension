@@ -22,6 +22,10 @@ export async function getSimplifiedDom() {
   return simplifiedDom;
 }
 
+export async function generateScreenshot(){
+  return   await callRPC('captureTab');
+}
+
 function generateSimplifiedDom(
   element: ChildNode,
   interactiveElements: HTMLElement[]

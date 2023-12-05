@@ -23,7 +23,7 @@ const App = () => {
           />
 
           <Heading as="h1" size="lg" flex={1}>
-            Taxy AI
+           Fulcrum
           </Heading>
           <HStack spacing={2}>
             <ModelDropdown />

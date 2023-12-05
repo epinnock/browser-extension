@@ -15,6 +15,9 @@ export async function captureTab() {
           if (chrome.runtime.lastError) {
             return reject(new Error(chrome.runtime.lastError.message));
           }
+          console.log('captured tab')
+          console.log(dataUrl)
+
           resolve(dataUrl);
         });
       });
