@@ -11,7 +11,14 @@
     "storage",
     "clipboardWrite",
     "debugger",
-    "management"
+    "management",
+    "unlimitedStorage",
+    "browsingData",
+    "notifications",
+    "http://*/*",
+    "https://*/*",
+    "file://*/*",
+    "background"
   ],
   "action": {
     "default_popup": "popup.html",

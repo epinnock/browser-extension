@@ -75,10 +75,32 @@ export default function getAnnotatedDOM() {
 
 
 export async function captureTab(): Promise<string> {
-  const canvas: HTMLCanvasElement = await html2canvas(document.body);
+  const canvas: HTMLCanvasElement = await html2canvas(document.body, {
+    useCORS : true,
+    allowTaint : true,
+ });
   const imageData: string = canvas.toDataURL('image/png');
-  console.log("rendered image data: \n", imageData);
   return imageData;
+}
+export async function captureVisibleTab() {
+  return new Promise((resolve, reject) => {
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      const tab = tabs[0];
+      if (!tab) {
+        return reject(new Error("No active tab found"));
+      }
+
+      chrome.tabs.captureVisibleTab(tab.windowId, {format: "png"}, (dataUrl) => {
+        if (chrome.runtime.lastError) {
+          return reject(new Error(chrome.runtime.lastError.message));
+        }
+        console.log('captured visible tab')
+        console.log(dataUrl)
+
+        resolve(dataUrl);
+      });
+    });
+  });
 }
 
 // idempotent function to get a unique id for an element

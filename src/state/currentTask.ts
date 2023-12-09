@@ -12,7 +12,7 @@ import {
 } from '../helpers/parseResponse';
 import { determineNextAction } from '../helpers/determineNextAction';
 import templatize from '../helpers/shrinkHTML/templatize';
-import { getSimplifiedDom } from '../helpers/simplifyDom';
+import { getSimplifiedDom,generateScreenshot } from '../helpers/simplifyDom';
 import { sleep, truthyFilter } from '../helpers/utils';
 import { MyStateCreator } from './store';
 
@@ -21,6 +21,7 @@ export type TaskHistoryEntry = {
   response: string;
   action: ParsedResponse;
   usage: CreateCompletionResponseUsage;
+  image: string | null; 
 };
 
 export type CurrentTaskSlice = {
@@ -90,8 +91,9 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
 
           setActionStatus('pulling-dom');
           const pageDOM = await getSimplifiedDom();
+          const screenshotAsString =await generateScreenshot();
           //Todo: figure out why this is failing
-          //const pageScreenshot = await callDOMAction('captureTab');
+          
           if (!pageDOM) {
             set((state) => {
               state.currentTask.status = 'error';
@@ -116,6 +118,7 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
               (pa) => !('error' in pa)
             ) as ParsedResponseSuccess[],
             currentDom,
+            screenshotAsString,
             3,
             onError
           );
@@ -138,6 +141,7 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
               response: query.response,
               action,
               usage: query.usage,
+              image: screenshotAsString,
             });
           });
           if ('error' in action) {

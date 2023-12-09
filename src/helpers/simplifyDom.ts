@@ -23,7 +23,12 @@ export async function getSimplifiedDom() {
 }
 
 export async function generateScreenshot(){
-  return   await callRPC('captureTab');
+  const screenshotAsString =   await callRPC('captureTab');
+  const currentVisibleScreenshot = await callRPC('captureVisibleTab');
+  if(!screenshotAsString){
+    return null;
+  }
+  return screenshotAsString as string;
 }
 
 function generateSimplifiedDom(

@@ -1,8 +1,5 @@
-import {
-  Configuration,
-  CreateCompletionResponseUsage,
-  OpenAIApi,
-} from 'openai';
+import OpenAI from 'openai';
+
 import { useAppState } from '../state/store';
 import { availableActions } from './availableActions';
 import { ParsedResponseSuccess } from './parseResponse';
@@ -36,7 +33,9 @@ export async function determineNextAction(
   taskInstructions: string,
   previousActions: ParsedResponseSuccess[],
   simplifiedDOM: string,
+  screenshotAsString: string | null,
   maxAttempts = 3,
+  
   
   notifyError?: (error: string) => void,
 ) {
@@ -50,21 +49,49 @@ export async function determineNextAction(
 
 
   //@Todo we export to a new function than can change this to point to the vllm local llm server based on the model
-  const openai = new OpenAIApi(
-    new Configuration({
+  const openai = new OpenAI({
       apiKey: key,
-    })
-  );
-  const vllm = new OpenAIApi(
-    new Configuration({
+      dangerouslyAllowBrowser: true 
+
+});
+  const vllm = new OpenAI(
+    {
       apiKey: key,
-      basePath: 'http://192.168.0.152:8000/v1',
-    }));
+      baseURL: 'http://192.168.0.152:8000/v1',
+      dangerouslyAllowBrowser: true 
+
+    });
 
   const api = model.includes('gpt') ? openai:vllm;
   for (let i = 0; i < maxAttempts; i++) {
     try {
-      const completion = await api.createChatCompletion({
+      let completion:any;
+      if(model.includes('vision') && screenshotAsString){
+        completion = await openai.chat.completions.create({
+          model: "gpt-4-vision-preview",
+          messages: [
+            {
+              role: 'system',
+              content: systemMessage,
+            },
+            {
+              role: "user",
+              content: [
+                { type: "text", text: prompt },
+                {
+                  type: "image_url",
+                  image_url: {
+                    "url": screenshotAsString,
+                  },
+                },
+              ],
+            },
+          ],
+        });
+      }
+
+      else{
+        completion = await api.chat.completions.create({
         model: model,
         messages: [
           {
@@ -77,12 +104,13 @@ export async function determineNextAction(
         temperature: 0,
         stop: ['</Action>'],
       });
-
+    }
+   
       return {
-        usage: completion.data.usage as CreateCompletionResponseUsage,
+        usage: completion.usage,
         prompt,
         response:
-          completion.data.choices[0].message?.content?.trim() + '</Action>',
+          completion.choices[0].message?.content?.trim() + '</Action>',
       };
     } catch (error: any) {
       console.log('determineNextAction error', error);
