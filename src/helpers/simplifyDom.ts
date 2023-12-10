@@ -24,7 +24,7 @@ export async function getSimplifiedDom() {
 
 export async function generateScreenshot(){
   const screenshotAsString =   await callRPC('captureTab');
-  const currentVisibleScreenshot = await callRPC('captureVisibleTab');
+  const currentVisibleTab = await callRPC('captureVisibleTab');
   if(!screenshotAsString){
     return null;
   }
