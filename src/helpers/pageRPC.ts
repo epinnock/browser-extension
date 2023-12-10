@@ -29,8 +29,16 @@ export const callRPC = async <T extends MethodName>(
   payload?: Payload<T>,
   maxTries = 1
 ): Promise<MethodRT<T>> => {
+  //verify if its possible to send a message to the background script with tabs.sendMessage vs runtime.sendMessage
+
+  chrome.runtime.sendMessage('get-user-data', (response) => {
+    // 3. Got an asynchronous response with the data from the service worker
+    console.log('received user data', response);
+  });
+
   let queryOptions = { active: true, currentWindow: true };
-  let activeTab = (await chrome.tabs.query(queryOptions))[0];
+  let activeTabs:chrome.tabs.Tab[] = (await chrome.tabs.query(queryOptions));
+  let activeTab = activeTabs[0];
 
   // If the active tab is a chrome-extension:// page, then we need to get some random other tab for testing
   if (activeTab.url?.startsWith('chrome')) {
@@ -43,6 +51,7 @@ export const callRPC = async <T extends MethodName>(
   let err: any;
   for (let i = 0; i < maxTries; i++) {
     try {
+ 
       const response = await chrome.tabs.sendMessage(activeTab.id, {
         type,
         payload: payload || [],

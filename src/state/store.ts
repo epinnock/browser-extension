@@ -36,10 +36,6 @@ export const useAppState = create<StoreType>()(
         ui: {
           instructions: state.ui.instructions,
         },
-        currentTask:{
-          instructions: state.currentTask.instructions,
-          history: state.currentTask.history,
-        },
         settings: {
           openAIKey: state.settings.openAIKey,
           selectedModel: state.settings.selectedModel,
