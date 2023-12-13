@@ -1,6 +1,6 @@
 // console.log('Content script loaded..');
 
-import { callRPC } from './pageRPC';
+import { callRPC,callBackgroundForScreenshot,callBackgroundForTab } from './pageRPC';
 import { truthyFilter } from './utils';
 
 export async function getSimplifiedDom() {
@@ -22,13 +22,18 @@ export async function getSimplifiedDom() {
   return simplifiedDom;
 }
 
-export async function generateScreenshot(){
+export async function captureTabwithHtml2Canvas(){
   const screenshotAsString =   await callRPC('captureTab');
-  const currentVisibleTab = await callRPC('captureVisibleTab');
   if(!screenshotAsString){
     return null;
   }
   return screenshotAsString as string;
+}
+
+export async function generateScreenshot(){
+  const currentVisibleTab = await callBackgroundForScreenshot();
+  const testinfo = callBackgroundForTab();
+  return currentVisibleTab as string;
 }
 
 function generateSimplifiedDom(

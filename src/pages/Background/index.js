@@ -1,20 +1,28 @@
+import { GET_VISIBLE_TAB } from '../../constants';
+
+const user = {
+    username: 'demo-user'
+  };
+  
 chrome.runtime.onMessage.addListener(
-   async function(request, sender, sendResponse) {
-        console.log('Message received! in background.js');
-        const screenshotUrl = await chrome.tabs.captureVisibleTab();
-        console.log('screenshotUrl generated! in background.js');
-        console.log(screenshotUrl);
-        sendResponse({screenshotUrl});
+    (message, sender, sendResponse)  => {
+        // If asking for screenshot send screenshot
+        if (message == GET_VISIBLE_TAB) {
+          // @ts-expect-error we need to type payload
+          const resp = chrome.tabs.captureVisibleTab();
+          if (resp instanceof Promise) {
+            resp.then((resolvedResp) => {
+              console.log(resolvedResp);  
+              sendResponse(resolvedResp);
+            });
+            return true;
+          } else {
+            sendResponse(resp);
+          }
+        }
+        // 2. A page requested user data, respond with a copy of `user`
+        else if (message === 'get-user-data'){
+            sendResponse(user);
+        }
     }
 );
-
-/*
-chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-      console.log(sender.tab ?
-                  "from a content script:" + sender.tab.url :
-                  "from the extension");
-      if (request.greeting === "hello")
-        sendResponse({farewell: "goodbye"});
-    }
-  );*/

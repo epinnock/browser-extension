@@ -87,6 +87,9 @@ export async function determineNextAction(
               ],
             },
           ],
+          max_tokens: 500,
+          temperature: 0,
+          stop: ['</Action>'],
         });
       }
 
@@ -109,6 +112,7 @@ export async function determineNextAction(
       return {
         usage: completion.usage,
         prompt,
+        rawResponse: completion,
         response:
           completion.choices[0].message?.content?.trim() + '</Action>',
       };

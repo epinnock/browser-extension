@@ -15,7 +15,8 @@
     "unlimitedStorage",
     "browsingData",
     "notifications",
-    "background"
+    "background",
+    "webRequest"
   ],
   "host_permissions": ["*://*/*","<all_urls>"],
   "action": {

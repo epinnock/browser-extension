@@ -8,6 +8,7 @@ import { copyToClipboard } from '../pages/Content/copyToClipboard';
 
 import ripple from '../pages/Content/ripple';
 import { sleep } from './utils';
+import { GET_VISIBLE_TAB } from '../constants';
 
 export const rpcMethods = {
   getAnnotatedDOM,
@@ -24,20 +25,44 @@ type Payload<T extends MethodName> = Parameters<RPCMethods[T]>;
 type MethodRT<T extends MethodName> = ReturnType<RPCMethods[T]>;
 
 // Call this function from the content script
+
+
+export const callBackgroundForScreenshot = async () => {
+    //gain a better understanding of content script vs background script
+
+  const response = await chrome.runtime.sendMessage(GET_VISIBLE_TAB);
+  // 3. Got an asynchronous response with the data from the service worker
+  console.log('response:',response);
+  console.log('received screenshot');
+  return response;
+}
+export const callBackgroundForTab = () => {
+  // 1. Send a message to the service worker requesting the user's data
+  chrome.runtime.sendMessage('get-user-data').then((response) => {
+    // 4. Got an asynchronous response with the data from the service worker
+    console.log('response:',response);
+  }).catch((err) => {
+    console.log('err:',err);
+  }
+  );
+}
+
+
+
+
+
 export const callRPC = async <T extends MethodName>(
   type: keyof typeof rpcMethods,
   payload?: Payload<T>,
   maxTries = 1
 ): Promise<MethodRT<T>> => {
-  //verify if its possible to send a message to the background script with tabs.sendMessage vs runtime.sendMessage
 
-  chrome.runtime.sendMessage('get-user-data', (response) => {
-    // 3. Got an asynchronous response with the data from the service worker
-    console.log('received user data', response);
-  });
 
   let queryOptions = { active: true, currentWindow: true };
   let activeTabs:chrome.tabs.Tab[] = (await chrome.tabs.query(queryOptions));
+  console.log('activeTabs', activeTabs);
+  // print number of active tabs
+  console.log('activeTabs.length', activeTabs.length);
   let activeTab = activeTabs[0];
 
   // If the active tab is a chrome-extension:// page, then we need to get some random other tab for testing

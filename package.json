@@ -24,12 +24,14 @@
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.57.0",
     "babel-jest": "^29.5.0",
+    "buffer": "^6.0.3",
     "dotenv-webpack": "^8.0.1",
     "eslint-plugin-unused-imports": "^2.0.0",
     "framer-motion": "^8.4.3",
     "immer": "^9.0.21",
     "lodash": "^4.17.21",
     "openai": "^4.20.1",
+    "os-browserify": "^0.3.0",
     "prettier": "^2.8.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -38,6 +40,7 @@
     "react-syntax-highlighter": "^15.5.0",
     "react-textarea-autosize": "^8.4.1",
     "react-use": "^17.4.0",
+    "winston": "^3.11.0",
     "zustand": "^4.3.6"
   },
   "devDependencies": {

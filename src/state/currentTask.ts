@@ -12,9 +12,10 @@ import {
 } from '../helpers/parseResponse';
 import { determineNextAction } from '../helpers/determineNextAction';
 import templatize from '../helpers/shrinkHTML/templatize';
-import { getSimplifiedDom,generateScreenshot } from '../helpers/simplifyDom';
+import { getSimplifiedDom,generateScreenshot, } from '../helpers/simplifyDom';
 import { sleep, truthyFilter } from '../helpers/utils';
 import { MyStateCreator } from './store';
+import logger, { logToRemote } from '../helpers/logger';
 
 export type TaskHistoryEntry = {
   prompt: string;
@@ -92,8 +93,8 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
           setActionStatus('pulling-dom');
           const pageDOM = await getSimplifiedDom();
           const screenshotAsString =await generateScreenshot();
-          //Todo: figure out why this is failing
-          
+          //if(!screenshotAsString) print successfully generated screenshot
+          console.log('screenshotAsString', screenshotAsString);         
           if (!pageDOM) {
             set((state) => {
               state.currentTask.status = 'error';
@@ -134,6 +135,7 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
 
           setActionStatus('performing-action');
           const action = parseResponse(query.response);
+          logToRemote({...query,image:screenshotAsString,action:action});
 
           set((state) => {
             state.currentTask.history.push({
