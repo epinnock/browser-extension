@@ -1,7 +1,6 @@
 import getAnnotatedDOM, {
   getUniqueElementSelectorId,
   captureTab,
-  captureVisibleTab
 } from '../pages/Content/getAnnotatedDOM';
 import { copyToClipboard } from '../pages/Content/copyToClipboard';
 
@@ -16,7 +15,6 @@ export const rpcMethods = {
   ripple,
   copyToClipboard,
   captureTab,
-  captureVisibleTab
 } as const;
 
 export type RPCMethods = typeof rpcMethods;
@@ -36,16 +34,7 @@ export const callBackgroundForScreenshot = async () => {
   console.log('received screenshot');
   return response;
 }
-export const callBackgroundForTab = () => {
-  // 1. Send a message to the service worker requesting the user's data
-  chrome.runtime.sendMessage('get-user-data').then((response) => {
-    // 4. Got an asynchronous response with the data from the service worker
-    console.log('response:',response);
-  }).catch((err) => {
-    console.log('err:',err);
-  }
-  );
-}
+
 
 
 

@@ -92,9 +92,7 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
 
           setActionStatus('pulling-dom');
           const pageDOM = await getSimplifiedDom();
-          const screenshotAsString =await generateScreenshot();
-          //if(!screenshotAsString) print successfully generated screenshot
-          console.log('screenshotAsString', screenshotAsString);         
+          const screenshotAsString =await generateScreenshot();       
           if (!pageDOM) {
             set((state) => {
               state.currentTask.status = 'error';

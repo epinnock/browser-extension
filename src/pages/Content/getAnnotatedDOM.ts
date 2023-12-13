@@ -80,12 +80,7 @@ export async function captureTab(): Promise<string> {
   const imageData: string = canvas.toDataURL('image/png');
   return imageData;
 }
-export async function captureVisibleTab() {
- console.log('captureVisibleTab: about to send message') 
- console.log('captureVisibleTab: got response:')
- await setTimeout(() => {}, 0);
- return null;
-}
+
 
 // idempotent function to get a unique id for an element
 export function getUniqueElementSelectorId(id: number): string {
