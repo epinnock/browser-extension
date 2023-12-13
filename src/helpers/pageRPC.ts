@@ -1,16 +1,20 @@
 import getAnnotatedDOM, {
   getUniqueElementSelectorId,
+  captureTab,
 } from '../pages/Content/getAnnotatedDOM';
 import { copyToClipboard } from '../pages/Content/copyToClipboard';
 
+
 import ripple from '../pages/Content/ripple';
 import { sleep } from './utils';
+import { GET_VISIBLE_TAB } from '../constants';
 
 export const rpcMethods = {
   getAnnotatedDOM,
   getUniqueElementSelectorId,
   ripple,
   copyToClipboard,
+  captureTab,
 } as const;
 
 export type RPCMethods = typeof rpcMethods;
@@ -19,13 +23,36 @@ type Payload<T extends MethodName> = Parameters<RPCMethods[T]>;
 type MethodRT<T extends MethodName> = ReturnType<RPCMethods[T]>;
 
 // Call this function from the content script
+
+
+export const callBackgroundForScreenshot = async () => {
+    //gain a better understanding of content script vs background script
+
+  const response = await chrome.runtime.sendMessage(GET_VISIBLE_TAB);
+  // 3. Got an asynchronous response with the data from the service worker
+  console.log('response:',response);
+  console.log('received screenshot');
+  return response;
+}
+
+
+
+
+
+
 export const callRPC = async <T extends MethodName>(
   type: keyof typeof rpcMethods,
   payload?: Payload<T>,
   maxTries = 1
 ): Promise<MethodRT<T>> => {
+
+
   let queryOptions = { active: true, currentWindow: true };
-  let activeTab = (await chrome.tabs.query(queryOptions))[0];
+  let activeTabs:chrome.tabs.Tab[] = (await chrome.tabs.query(queryOptions));
+  console.log('activeTabs', activeTabs);
+  // print number of active tabs
+  console.log('activeTabs.length', activeTabs.length);
+  let activeTab = activeTabs[0];
 
   // If the active tab is a chrome-extension:// page, then we need to get some random other tab for testing
   if (activeTab.url?.startsWith('chrome')) {
@@ -38,6 +65,7 @@ export const callRPC = async <T extends MethodName>(
   let err: any;
   for (let i = 0; i < maxTries; i++) {
     try {
+ 
       const response = await chrome.tabs.sendMessage(activeTab.id, {
         type,
         payload: payload || [],
