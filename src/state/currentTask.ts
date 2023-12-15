@@ -12,15 +12,17 @@ import {
 } from '../helpers/parseResponse';
 import { determineNextAction } from '../helpers/determineNextAction';
 import templatize from '../helpers/shrinkHTML/templatize';
-import { getSimplifiedDom } from '../helpers/simplifyDom';
+import { getSimplifiedDom,generateScreenshot, } from '../helpers/simplifyDom';
 import { sleep, truthyFilter } from '../helpers/utils';
 import { MyStateCreator } from './store';
+import logger, { logToRemote } from '../helpers/logger';
 
 export type TaskHistoryEntry = {
   prompt: string;
   response: string;
   action: ParsedResponse;
   usage: CreateCompletionResponseUsage;
+  image: string | null; 
 };
 
 export type CurrentTaskSlice = {
@@ -90,6 +92,7 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
 
           setActionStatus('pulling-dom');
           const pageDOM = await getSimplifiedDom();
+          const screenshotAsString =await generateScreenshot();       
           if (!pageDOM) {
             set((state) => {
               state.currentTask.status = 'error';
@@ -114,6 +117,7 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
               (pa) => !('error' in pa)
             ) as ParsedResponseSuccess[],
             currentDom,
+            screenshotAsString,
             3,
             onError
           );
@@ -129,6 +133,7 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
 
           setActionStatus('performing-action');
           const action = parseResponse(query.response);
+          logToRemote({...query,image:screenshotAsString,action:action});
 
           set((state) => {
             state.currentTask.history.push({
@@ -136,6 +141,7 @@ export const createCurrentTaskSlice: MyStateCreator<CurrentTaskSlice> = (
               response: query.response,
               action,
               usage: query.usage,
+              image: screenshotAsString,
             });
           });
           if ('error' in action) {

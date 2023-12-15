@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Taxy AI Alpha",
+  "name": "Fulcrum",
   "description": "A chrome extension that executes DOM actions to fulfill natural language commands on any website",
   "version": "1.1.0",
   "options_page": "options.html",
@@ -11,8 +11,14 @@
     "storage",
     "clipboardWrite",
     "debugger",
-    "management"
+    "management",
+    "unlimitedStorage",
+    "browsingData",
+    "notifications",
+    "background",
+    "webRequest"
   ],
+  "host_permissions": ["*://*/*","<all_urls>"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon-34.png"
@@ -23,7 +29,7 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],
-      "js": ["contentScript.bundle.js"],
+      "js": ["html2canvas.min.js","contentScript.bundle.js"],
       "css": ["content.styles.css"]
     }
   ],
