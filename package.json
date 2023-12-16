@@ -19,6 +19,7 @@
     "@chakra-ui/react": "^2.4.8",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@google/generative-ai": "^0.1.2",
     "@mozilla/readability": "^0.4.2",
     "@types/html2canvas": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^5.57.0",
