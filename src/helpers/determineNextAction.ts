@@ -65,57 +65,7 @@ export async function determineNextAction(
   const api = model.includes('gpt') ? openai:vllm;
   for (let i = 0; i < maxAttempts; i++) {
     try {
-      let completion:any;
-      if(model.includes('vision') && screenshotAsString){
-        completion = await openai.chat.completions.create({
-          model: "gpt-4-vision-preview",
-          messages: [
-            {
-              role: 'system',
-              content: systemMessage,
-            },
-            {
-              role: "user",
-              content: [
-                { type: "text", text: prompt },
-                {
-                  type: "image_url",
-                  image_url: {
-                    "url": screenshotAsString,
-                  },
-                },
-              ],
-            },
-          ],
-          max_tokens: 500,
-          temperature: 0,
-          stop: ['</Action>'],
-        });
-      }
-
-      else{
-        completion = await api.chat.completions.create({
-        model: model,
-        messages: [
-          {
-            role: 'system',
-            content: systemMessage,
-          },
-          { role: 'user', content: prompt },
-        ],
-        max_tokens: 500,
-        temperature: 0,
-        stop: ['</Action>'],
-      });
-    }
-   
-      return {
-        usage: completion.usage,
-        prompt,
-        rawResponse: completion,
-        response:
-          completion.choices[0].message?.content?.trim() + '</Action>',
-      };
+        // perform completion based on the current model
     } catch (error: any) {
       console.log('determineNextAction error', error);
       if (error.response.data.error.message.includes('server error')) {
