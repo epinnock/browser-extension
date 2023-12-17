@@ -1,23 +1,23 @@
-import {ApiResponse, Model}, ResponseProvider from "./ResponseProvider";
+import {ApiResponse, Model, ResponseProvider, ResponseProviderOptions}  from "./ResponseProvider";
 import OpenAI from 'openai';
 import { ParsedResponseSuccess } from '../helpers/parseResponse';
 
-export default class OpenAIResponseProvider extends ResponseProvider {
-    private api?: OpenAI;
 
-    constructor(url?: string, apikey?: string) {
-        super(url, apikey);
+export default class OpenAIResponseProvider extends ResponseProvider {
+    private api: OpenAI;
+
+    constructor(options: ResponseProviderOptions = {}) {
+        super(options);
         this.api = new OpenAI({
-            apiKey: apikey,
-            dangerouslyAllowBrowser: true 
-      
-      });
+            apiKey: options.apikey,
+            dangerouslyAllowBrowser: true
+        });
     }
 
-
-    async getCompletion(
+    override async getCompletion(
       model: Model,  
       systemMessage: string,
+      prompt: string,
       taskInstructions: string,
       previousActions: ParsedResponseSuccess[],
       simplifiedDOM: string,

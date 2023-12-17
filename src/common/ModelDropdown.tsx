@@ -9,11 +9,7 @@ const ModelDropdown = () => {
     updateSettings: state.settings.actions.update,
   }));
 
-  const { openAIKey } = useAppState((state) => ({
-    openAIKey: state.settings.openAIKey,
-  }));
 
-  if (!openAIKey) return null;
 
   return (
     // Chakra UI Select component
@@ -22,7 +18,7 @@ const ModelDropdown = () => {
       onChange={(e) => updateSettings({ selectedModel: e.target.value })}
     >
       {modelData.map((model) => (
-        <option key={model.name} value={model.name}>
+        <option key={model.name} value={model}>
           {model.displayName}
         </option>
       ))}

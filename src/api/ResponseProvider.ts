@@ -1,7 +1,16 @@
 import {
   ParsedResponseSuccess,
 } from '../helpers/parseResponse';
+
+  export const OPENAI_PROVIDER = 'OpenAI';
+  export const GEMINI_PROVIDER = 'Gemini';
+
+  export interface ResponseProviderOptions {
+    url?: string;
+    apikey?: string;
+  }
   
+
   export type ApiResponse = {
     usage: string;
     prompt: string;
@@ -17,18 +26,19 @@ import {
   }
 
 
-  export default abstract class ResponseProvider {
+  export  abstract class ResponseProvider {
     protected url?: string;
     protected apikey?: string;
   
-    constructor(url?: string, apikey?: string) {
-      this.url = url;
-      this.apikey = apikey;
+    constructor(options: ResponseProviderOptions = {}) {
+      this.url = options.url;
+      this.apikey = options.apikey;
     }
 
-    abstract async function getCompletion(
+    abstract getCompletion(
       model: Model,
       systemMessage: string,
+      prompt: string,
       taskInstructions: string,
       previousActions: ParsedResponseSuccess[],
       simplifiedDOM: string,
