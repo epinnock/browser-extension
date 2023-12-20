@@ -21,7 +21,13 @@ class GeminiResponseProvider extends ResponseProvider {
             },
         };
     }
-
+    formatPrompt(
+        systemMessage: string,
+        prompt: string,
+      ): string {
+      
+        return `${systemMessage}\n\n${prompt}`;
+      }
     // Generates a completion response using the Gemini model
      override async getCompletion(
       model: Model,
@@ -35,21 +41,21 @@ class GeminiResponseProvider extends ResponseProvider {
       notifyError?: (error: string) => void,
     ): Promise<ApiResponse> {
         try {
-  
+          const formattedPrompt = this.formatPrompt(systemMessage, prompt);
           const generationConfig = {
             stopSequences: ["</Action>"],
             maxOutputTokens: 500,
             temperature: 0.0,
           };
             const geminiModel = this.api.getGenerativeModel({ model: model.name,generationConfig });
-            const imageParts = screenshotAsString ? [this.fileToGenerativePart(screenshotAsString, "image/png")] : [];
-            const result = await geminiModel.generateContent([taskInstructions, ...imageParts]);
+            const imageParts = screenshotAsString ? [this.fileToGenerativePart(screenshotAsString, "image/jpeg")] : [];
+            const result = await geminiModel.generateContent([formattedPrompt, ...imageParts]);
             const geminiResponse = await result.response;
             const text = await geminiResponse.text();
 
             return {
                 usage: "Gemini",
-                prompt: taskInstructions,
+                prompt: formattedPrompt,
                 rawResponse: text,
                 response: text,
             };

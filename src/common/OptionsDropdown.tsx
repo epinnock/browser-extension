@@ -15,8 +15,7 @@ const OptionsDropdown = () => {
     updateSettings: state.settings.actions.update,
   }));
 
-  if (!openAIKey) return null;
-
+ 
   return (
     <Menu>
       <MenuButton

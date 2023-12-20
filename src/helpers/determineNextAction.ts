@@ -48,11 +48,8 @@ export async function determineNextAction(
   const geminiKey = useAppState.getState().settings.geminiKey;
 
   const prompt = formatPrompt(taskInstructions, previousActions, simplifiedDOM);
-  if (!openAIKey&&!geminiKey) {
-    notifyError?.('No API key found');
-    return null;
-  }
-  else if(!model){
+
+  if(!model){
     notifyError?.('No model selected');
     return null;
   }
@@ -66,16 +63,25 @@ export async function determineNextAction(
        let provider:ResponseProvider;
        switch(model.provider){
         case OPENAI_PROVIDER:
-          provider = new OpenAIResponseProvider({apikey:openAIKey});
+          if (!openAIKey) {
+            notifyError?.('No API key found');
+            return null;
+          }
+          provider = new OpenAIResponseProvider({apikey:openAIKey!!});
+          break;
        
         case GEMINI_PROVIDER:
-          provider = new GeminiResponseProvider({apikey:openAIKey});
-          return completion;
+          if (!geminiKey) {
+            notifyError?.('No API key found');
+            return null;
+          }
+          provider = new GeminiResponseProvider({apikey:geminiKey!!});
+          break;
         default:
           throw new Error(`Unknown model provider ${model.provider}`);
       }
       const completion = await provider.getCompletion(
-        model,
+        model!!,
         systemMessage,
         prompt,
         taskInstructions,
