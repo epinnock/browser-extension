@@ -6,14 +6,18 @@ const ModelDropdown = () => {
   const { updateSettings } = useAppState((state) => ({
     updateSettings: state.settings.actions.update,
   }));
+  const currentOpenAIkey = useAppState((state) => state.settings.openAIKey);
+  const currentGeminikey = useAppState((state) => state.settings.geminiKey);
 
-  const [openAIKey, setOpenAIKey] = React.useState('');
+  const [openAIKey, setOpenAIKey] = React.useState(currentOpenAIkey);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [geminiKey, setGeminiKey] = React.useState(currentGeminikey);
+  const [showGeminiKey, setShowGeminiKey] = React.useState(false);
 
   return (
     <VStack spacing={4}>
       <Text fontSize="sm">
-        You'll need an OpenAI API Key to run in developer mode. If you
+        You'll need an API Key to run in developer mode. If you
         don't already have one available, you can create one in your{' '}
         <Link
           href="https://platform.openai.com/account/api-keys"
@@ -42,13 +46,27 @@ const ModelDropdown = () => {
           {showPassword ? 'Hide' : 'Show'}
         </Button>
       </HStack>
+      <HStack w="full">
+        <Input
+          placeholder="Gemini API Key"
+          value={geminiKey}
+          onChange={(event) => setGeminiKey(event.target.value)}
+          type={showGeminiKey ? 'text' : 'password'}
+        />
+        <Button
+          onClick={() => setShowGeminiKey(!showGeminiKey)}
+          variant="outline"
+        >
+          {showGeminiKey ? 'Hide' : 'Show'}
+        </Button>
+      </HStack>
       <Button
-        onClick={() => updateSettings({ openAIKey })}
+        onClick={() => updateSettings({ openAIKey, geminiKey, showSettings:false})}
         w="full"
-        disabled={!openAIKey}
+        disabled={!(openAIKey||geminiKey)}
         colorScheme="blue"
       >
-        Save Key
+        Save
       </Button>
     </VStack>
   );

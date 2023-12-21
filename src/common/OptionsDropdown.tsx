@@ -15,8 +15,7 @@ const OptionsDropdown = () => {
     updateSettings: state.settings.actions.update,
   }));
 
-  if (!openAIKey) return null;
-
+ 
   return (
     <Menu>
       <MenuButton
@@ -29,10 +28,10 @@ const OptionsDropdown = () => {
         <MenuItem
           icon={<RepeatIcon />}
           onClick={() => {
-            updateSettings({ openAIKey: '' });
+            updateSettings({ showSettings: true });
           }}
         >
-          Reset API Key
+          Set API Keys
         </MenuItem>
       </MenuList>
     </Menu>
