@@ -3,6 +3,9 @@ import OpenAI from 'openai';
 import { useAppState } from '../state/store';
 import { availableActions } from './availableActions';
 import { ParsedResponseSuccess } from './parseResponse';
+import { GEMINI_PROVIDER, OPENAI_PROVIDER, ResponseProvider} from '../api/ResponseProvider';
+import OpenAIResponseProvider  from '../api/OpenAIResponseProvider';
+import GeminiResponseProvider  from '../api/GeminiResponseProvider';
 
 const formattedActions = availableActions
   .map((action, i) => {
@@ -39,83 +42,56 @@ export async function determineNextAction(
   
   notifyError?: (error: string) => void,
 ) {
+  //Todo: change the model store in the state to be the json not the name
   const model = useAppState.getState().settings.selectedModel;
+  const openAIKey = useAppState.getState().settings.openAIKey;
+  const geminiKey = useAppState.getState().settings.geminiKey;
+
   const prompt = formatPrompt(taskInstructions, previousActions, simplifiedDOM);
-  const key = useAppState.getState().settings.openAIKey;
-  if (!key) {
-    notifyError?.('No OpenAI key found');
+
+  if(!model){
+    notifyError?.('No model selected');
     return null;
   }
 
 
-  //@Todo we export to a new function than can change this to point to the vllm local llm server based on the model
-  const openai = new OpenAI({
-      apiKey: key,
-      dangerouslyAllowBrowser: true 
 
-});
-  const vllm = new OpenAI(
-    {
-      apiKey: key,
-      baseURL: 'http://192.168.0.152:8000/v1',
-      dangerouslyAllowBrowser: true 
-
-    });
-
-  const api = model.includes('gpt') ? openai:vllm;
   for (let i = 0; i < maxAttempts; i++) {
     try {
-      let completion:any;
-      if(model.includes('vision') && screenshotAsString){
-        completion = await openai.chat.completions.create({
-          model: "gpt-4-vision-preview",
-          messages: [
-            {
-              role: 'system',
-              content: systemMessage,
-            },
-            {
-              role: "user",
-              content: [
-                { type: "text", text: prompt },
-                {
-                  type: "image_url",
-                  image_url: {
-                    "url": screenshotAsString,
-                  },
-                },
-              ],
-            },
-          ],
-          max_tokens: 500,
-          temperature: 0,
-          stop: ['</Action>'],
-        });
+        // perform completion based on the current model
+       // perform completion based on the current model
+       let provider:ResponseProvider;
+       switch(model.provider){
+        case OPENAI_PROVIDER:
+          if (!openAIKey) {
+            notifyError?.('No API key found');
+            return null;
+          }
+          provider = new OpenAIResponseProvider({apikey:openAIKey!!});
+          break;
+       
+        case GEMINI_PROVIDER:
+          if (!geminiKey) {
+            notifyError?.('No API key found');
+            return null;
+          }
+          provider = new GeminiResponseProvider({apikey:geminiKey!!});
+          break;
+        default:
+          throw new Error(`Unknown model provider ${model.provider}`);
       }
-
-      else{
-        completion = await api.chat.completions.create({
-        model: model,
-        messages: [
-          {
-            role: 'system',
-            content: systemMessage,
-          },
-          { role: 'user', content: prompt },
-        ],
-        max_tokens: 500,
-        temperature: 0,
-        stop: ['</Action>'],
-      });
-    }
-   
-      return {
-        usage: completion.usage,
+      const completion = await provider.getCompletion(
+        model!!,
+        systemMessage,
         prompt,
-        rawResponse: completion,
-        response:
-          completion.choices[0].message?.content?.trim() + '</Action>',
-      };
+        taskInstructions,
+        previousActions,
+        simplifiedDOM,
+        screenshotAsString,
+        maxAttempts,
+        notifyError
+      );
+      return completion;
     } catch (error: any) {
       console.log('determineNextAction error', error);
       if (error.response.data.error.message.includes('server error')) {

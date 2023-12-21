@@ -1,15 +1,21 @@
 import { MyStateCreator } from './store';
+import { Model } from '../api/ResponseProvider';
+
 
 export type SettingsSlice = {
   openAIKey: string | null;
-  selectedModel: string;
+  geminiKey: string | null;
+  selectedModel: Model|null;
+  showSettings: boolean;
   actions: {
     update: (values: Partial<SettingsSlice>) => void;
   };
 };
 export const createSettingsSlice: MyStateCreator<SettingsSlice> = (set) => ({
   openAIKey: null,
-  selectedModel: 'gpt-3.5-turbo',
+  selectedModel: null,
+  geminiKey: null,
+  showSettings: false,
   actions: {
     update: (values) => {
       set((state) => {
