@@ -1,33 +1,26 @@
-<img src="src/assets/img/icon-128.png" width="64"/>
 
-# Taxy AI: Full Browser Automation
-[Waitlist](https://docs.google.com/forms/d/e/1FAIpQLScAFKI1fZ1cXhBmSp2HM93Jvuc8Jvrxh5iSbkKhtwKN-OHoTQ/viewform) | [Discord](https://discord.gg/DXaErbBc)
 
-Taxy uses GPT-4 to control your browser and perform repetitive actions on your behalf. Currently it allows you to define ad-hoc instructions. In the future it will also support saved and scheduled workflows.
+# Fulcrum: Full Browser Automation with Vision Support
 
-Taxy's current status is **research preview**. Many workflows fail or confuse the agent. If you'd like to hack on Taxy to make it better or test it on your own workflows, follow the instructions below to run it locally. If you'd like to know once it's available for wider usage, you can sign up for our [waitlist](https://docs.google.com/forms/d/e/1FAIpQLScAFKI1fZ1cXhBmSp2HM93Jvuc8Jvrxh5iSbkKhtwKN-OHoTQ/viewform).
+Fulcrum, a fork of the original Taxy AI project, harnesses the power of GPT-4 along with advanced vision models such as GPT4-Vision-Turbo and Gemini Pro to control your browser and perform a wide array of tasks. These enhancements allow Fulcrum to interpret and interact with both textual and visual content on web pages, offering a more dynamic and versatile automation experience.
+The Chrome Plugin, a key component of Fulcrum, now features screenshot functionality. It captures the current visible screen, integrating these screenshots into the prompts sent to Fulcrum. This allows for more accurate and context-aware automation based on visual information.
+￼
 
-Taxy is fully open-source, and we don't send any page contents or instructions to our servers.
+Fulcrum uses LLMs to control your browser and perform repetitive actions on your behalf. Currently it allows you to define ad-hoc text instructions.
 
-Here's Taxy using Google Calendar with the prompt "Schedule standup tomorrow at 10am. Invite david@taxy.ai"
 
-![calendar](https://user-images.githubusercontent.com/176426/228092695-1bc11ea9-bfb7-470d-bbc6-0026e93c23c3.gif)
+Fulcrum is fully open-source, and requires users to bring their keys, ultimately we would like to move to hosting our own models using cogagent/llava .
 
+<img src="src/assets/img/fulcrum_128.png" width="64"/>
 
 ## Table of Contents
 
-- [Fulcrum: Full Browser Automation](#taxy-ai-full-browser-automation)
+- [Fulcrum: Full Browser Automation](#fulcrum-full-browser-automation-with-vision-support)
   - [Table of Contents](#table-of-contents)
   - [Installing and Running](#installing-and-running)
     - [Installing the extension](#installing-the-extension)
     - [Running in your browser](#running-in-your-browser)
   - [How it Works - The Action Cycle](#how-it-works---the-action-cycle)
-  - [Simple Demos](#simple-demos)
-    - [Protecting the main branch in GitHub](#protecting-the-main-branch-in-github)
-    - [Searching for and playing the movie Oblivion in Netflix](#searching-for-and-playing-the-movie-oblivion-in-netflix)
-    - [Creating a calendar event](#creating-a-calendar-event)
-    - [Writing an essay in the OpenAI playground](#writing-an-essay-in-the-openai-playground)
-    - [Add your own!](#add-your-own)
   - [Tech Stack](#tech-stack)
   - [Resources](#resources)
 
@@ -68,27 +61,7 @@ Currently this extension is only available through this GitHub repo. We'll relea
 4. Taxy executes the action using the [chrome.debugger API](https://developer.chrome.com/docs/extensions/reference/debugger/).
 5. The action is added to the action history and Taxy cycles back to step 1 and parses the updated DOM. All prior actions are sent to the LLM as part of the prompt used to determine the next action. Taxy can currently complete a maximum of 50 actions for a single task, though in practice most tasks require fewer than 10 actions.
 
-## Simple Demos
 
-### Protecting the main branch in GitHub
-
-![main-branch](https://user-images.githubusercontent.com/41524992/228385404-175bf633-de1d-43eb-862c-2cfd5a7a674a.gif)
-
-### Searching for and playing the movie Oblivion in Netflix
-
-![Oblivion](https://user-images.githubusercontent.com/41524992/228063949-c26a4b54-92ae-4e22-8177-7e78c0d9a29b.gif)
-
-### Creating a calendar event
-
-![Calendar](https://user-images.githubusercontent.com/41524992/228064011-0ca3a39d-cebb-4a55-9e2b-6aa3ae5b3f43.gif)
-
-### Writing an essay in the OpenAI playground
-
-![Playground](https://user-images.githubusercontent.com/41524992/228064056-84eab4e4-b5b5-4e79-b1e3-be92f14d2607.gif)
-
-### Add your own!
-
-If you have an interesting demo you'd like to share, submit a PR to add your own!
 
 ## Tech Stack
 
